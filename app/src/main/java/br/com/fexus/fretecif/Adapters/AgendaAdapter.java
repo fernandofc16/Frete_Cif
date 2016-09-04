@@ -1,4 +1,4 @@
-package br.com.fexus.fretecif;
+package br.com.fexus.fretecif.Adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -7,51 +7,59 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.ArrayList;
+
+import br.com.fexus.fretecif.Extra.Information;
+import br.com.fexus.fretecif.R;
 
 public class AgendaAdapter extends RecyclerView.Adapter<AgendaAdapter.MyViewHolder> {
 
     private LayoutInflater inflater;
-    private List<Information> data = Collections.emptyList();
+    public static ArrayList<Information> dataInfo = new ArrayList<>();
 
-    public AgendaAdapter(Context context, List<Information> data) {
+    public AgendaAdapter(Context context, ArrayList<Information> dataInfo) {
         inflater = LayoutInflater.from(context);
-        this.data = data;
+        AgendaAdapter.dataInfo = dataInfo;
     }
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = inflater.inflate(R.layout.frete_row, parent, false);
-        MyViewHolder holder = new MyViewHolder(view);
-        return holder;
+        return new MyViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        Information current = data.get(position);
-        holder.empresa.setText(current.empresa);
-        holder.notaFiscal.setText(current.notaFiscal);
-        holder.peso.setText(current.peso);
-        holder.valor.setText(current.valor);
+        Information current = dataInfo.get(position);
+        holder.empresa.setText(current.getEmpresa());
+        holder.empresaDestiny.setText((current.getEmpresaDestiny()));
+        holder.notaFiscal.setText("NF".concat(current.getNotaFiscal()));
+        if (!current.getPeso().trim().equals("")) {
+            holder.peso.setText(current.getPeso().concat("Kg"));
+        } else {
+            holder.peso.setText("");
+        }
+        holder.valor.setText(current.getValor());
     }
 
     @Override
     public int getItemCount() {
-        return data.size();
+        return dataInfo.size();
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder {
 
-        TextView empresa, notaFiscal, peso, valor;
+        TextView empresa, empresaDestiny, notaFiscal, peso, valor;
 
         public MyViewHolder(View itemView) {
             super(itemView);
             empresa = (TextView) itemView.findViewById(R.id.empresa);
+            empresaDestiny = (TextView) itemView.findViewById(R.id.empresaDestiny);
             notaFiscal = (TextView) itemView.findViewById(R.id.notaFiscal);
             peso = (TextView) itemView.findViewById(R.id.peso);
             valor = (TextView) itemView.findViewById(R.id.valor);
         }
 
     }
+
 }

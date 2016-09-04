@@ -1,9 +1,11 @@
-package br.com.fexus.fretecif;
+package br.com.fexus.fretecif.Activities;
 
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -31,6 +33,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import br.com.fexus.fretecif.Adapters.TabsAdapterMain;
+import br.com.fexus.fretecif.R;
+
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     CalendarView calendar = null;
@@ -43,32 +48,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        calendar = (CalendarView) findViewById(R.id.calendar);
-        calendar.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
-            @Override
-            public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {
-                //Toast.makeText(getApplicationContext(), dayOfMonth + "/" + (month+1) + "/" + year, Toast.LENGTH_SHORT).show();
-                //startActivity(new Intent(getApplicationContext(), AgendaActivity.class));
-            }
-        });
-
         File folder = getExternalFilesDir("Frete&Cif");
 
         file = new File(folder, "Frete&Cif.xls");
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                if(createExcelFile()) {
-                    Toast.makeText(getApplicationContext(), "File Created", Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(getApplicationContext(), "File Not Created", Toast.LENGTH_LONG).show();
-                }
-
-            }
-        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -78,6 +60,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabLayout);
+        ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
+        TabsAdapterMain tabsAdapterMain = new TabsAdapterMain(getSupportFragmentManager());
+
+        viewPager.setAdapter(tabsAdapterMain);
+        tabLayout.setupWithViewPager(viewPager);
+
     }
 
     public void openXLSX(View view) {

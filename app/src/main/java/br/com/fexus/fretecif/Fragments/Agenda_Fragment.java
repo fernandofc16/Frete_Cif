@@ -1,4 +1,4 @@
-package br.com.fexus.fretecif;
+package br.com.fexus.fretecif.Fragments;
 
 import android.os.Bundle;
 import android.app.Fragment;
@@ -9,12 +9,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
-import java.util.List;
+
+import br.com.fexus.fretecif.Adapters.AgendaAdapter;
+import br.com.fexus.fretecif.Extra.Information;
+import br.com.fexus.fretecif.R;
 
 public class Agenda_Fragment extends Fragment {
-
-    private RecyclerView recyclerView;
-    private AgendaAdapter adapter;
 
     public Agenda_Fragment() {
 
@@ -29,11 +29,11 @@ public class Agenda_Fragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_agenda_, container, false);
+        View view = inflater.inflate(R.layout.fragment_agenda_lista, container, false);
 
-        recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
+        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
 
-        adapter = new AgendaAdapter(getActivity(), getData());
+        AgendaAdapter adapter = new AgendaAdapter(getActivity(), getData());
         recyclerView.setAdapter(adapter);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -41,17 +41,17 @@ public class Agenda_Fragment extends Fragment {
         return view;
     }
 
-    public static List<Information> getData() {
-        List<Information> data = new ArrayList<>();
+    public static ArrayList<Information> getData() {
+        ArrayList<Information> data = new ArrayList<>();
 
         String[] empresas = {"Adecol"}, notasFiscais = {"5588253"}, pesos = {"1200"}, valores = {"450"};
 
         for(int i = 0; i < empresas.length; i++) {
             Information current = new Information();
-            current.empresa = empresas[i];
-            current.notaFiscal = notasFiscais[i];
-            current.peso = pesos[i];
-            current.valor = valores[i];
+            current.setEmpresa(empresas[i]);
+            current.setNotaFiscal(notasFiscais[i]);
+            current.setPeso(pesos[i]);
+            current.setValor(valores[i]);
         }
 
         return data;
