@@ -113,7 +113,7 @@ public class ExcelFileCreater {
                         cellInfo.setCellValue(informationsByDates.get(i).getPeso());
                         break;
                     case 3:
-                        cellInfo.setCellValue(informationsByDates.get(i).getNotaFiscal());
+                        cellInfo.setCellValue("NF".concat(informationsByDates.get(i).getNotaFiscal()));
                         break;
                     case 4:
                         String valor = informationsByDates.get(i).getValor();
@@ -123,6 +123,7 @@ public class ExcelFileCreater {
                             String valorFormated1 = valorFormated.replaceAll("\\.", "");
                             String valorFormated2 = valorFormated1.replaceAll(",", ".");
                             BigDecimal valorFormatedBigDouble = BigDecimal.valueOf(Double.parseDouble(valorFormated2));
+                            valorTotal = valorTotal.add(valorFormatedBigDouble);
                         }
                         break;
                 }
