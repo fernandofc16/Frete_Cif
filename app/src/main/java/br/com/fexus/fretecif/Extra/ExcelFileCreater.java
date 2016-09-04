@@ -26,12 +26,14 @@ public class ExcelFileCreater {
     private File file;
     private DatabaseHandler database;
     private List<String> datasFromTo;
+    private String company;
     private BigDecimal valorTotal = new BigDecimal(0.0);
     Workbook workbook;
     Sheet sheet;
 
-    public ExcelFileCreater(File file, Context context, String dataFrom, String dataTo) {
+    public ExcelFileCreater(File file, Context context, String dataFrom, String dataTo, String company) {
         this.file = file;
+        this.company = company;
         database = new DatabaseHandler(context);
         datasFromTo = DateCount.diferencaDeDatas(dataFrom, dataTo);
     }
@@ -52,6 +54,7 @@ public class ExcelFileCreater {
         sheet = workbook.createSheet(WorkbookUtil.createSafeSheetName("Frete&Cif e Coletas"));
         //sheet.setColumnWidth(0, 5000 );
         sheet.addMergedRegion(new CellRangeAddress(/*  Row : 1-1 */0, 0, /* Column : A-E */0, 4));
+        sheet.setDefaultColumnWidth(20);
 
         // Title
         Row row1 = sheet.createRow(0);
@@ -93,7 +96,7 @@ public class ExcelFileCreater {
         List<Information> informationsByDates = new ArrayList<>();
         for (String data : datasFromTo) {
 
-            for (Information info : database.selectAgendaInformationByData(data)) {
+            for (Information info : database.selectAgendaInformationByDataAndCompany(data, company)) {
                 informationsByDates.add(info);
             }
         }

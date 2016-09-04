@@ -11,7 +11,6 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -101,10 +100,13 @@ public class AgendaListaFragment extends Fragment {
                 TextView pesoTextView = (TextView) view.findViewById(R.id.peso);
                 TextView valorTextView = (TextView) view.findViewById(R.id.valor);
 
-                String pesoTextViewFormated = pesoTextView.getText().toString().replaceAll("[Kg]", "");
-                String notaFiscalTextFormated  = notaFiscalTextView.getText().toString().replaceAll("[NF]", "");
+                String empresaTextViewFormated = empresaTextView.getText().toString().substring(9, empresaTextView.getText().toString().length());
+                String empresaDestinyTextViewFormated = empresaDestinyTextView.getText().toString().substring(9, empresaDestinyTextView.getText().toString().length());
+                String pesoTextViewFormated = pesoTextView.getText().toString().replaceAll("[Kg]", "").replaceAll("[Peso:]","").trim();
+                String notaFiscalTextFormated  = notaFiscalTextView.getText().toString().replaceAll("[NF]", "").trim();
+                String valorTextViewFormated = valorTextView.getText().toString().replaceAll("[Valor:]","").trim();
 
-                Information informationDelete = new Information(CalendarFragment.data, empresaTextView.getText().toString(), empresaDestinyTextView.getText().toString(), notaFiscalTextFormated, pesoTextViewFormated, valorTextView.getText().toString());
+                Information informationDelete = new Information(CalendarFragment.data, empresaTextViewFormated, empresaDestinyTextViewFormated, notaFiscalTextFormated, pesoTextViewFormated, valorTextViewFormated);
 
                 AlertDialog askIt = askIfWantsToDelete(informationDelete);
                 askIt.show();

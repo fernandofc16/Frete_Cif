@@ -96,7 +96,9 @@ public class CalendarFragment extends Fragment {
                 AgendaListaFragment.adapter.notifyDataSetChanged();
 
                 TabLayout.Tab tab = tabLayout.getTabAt(1);
-                tab.select();
+                if (tab != null) {
+                    tab.select();
+                }
 
             }
         });
@@ -267,6 +269,10 @@ public class CalendarFragment extends Fragment {
                 LinearLayout layout = new LinearLayout(v.getContext());
                 layout.setOrientation(LinearLayout.VERTICAL);
 
+                final RadioGroup radioGroup = new RadioGroup(v.getContext());
+                final RadioButton radioButtonAdecol = new RadioButton(v.getContext());
+                final RadioButton radioButtonCartint = new RadioButton(v.getContext());
+
                 // Set up the input
                 final EditText dateFrom = new EditText(v.getContext());
                 dateFrom.setHint("Do dia...");
@@ -306,6 +312,16 @@ public class CalendarFragment extends Fragment {
                     }
                 });
 
+                radioButtonAdecol.setText("Adecol");
+                radioButtonCartint.setText("Cartint");
+                radioButtonAdecol.setTextSize(17);
+                radioButtonCartint.setTextSize(17);
+                radioGroup.addView(radioButtonAdecol);
+                radioGroup.addView(radioButtonCartint);
+                radioGroup.check(radioGroup.getChildAt(0).getId());
+
+                layout.addView(radioGroup);
+
                 layout.addView(dateFrom);
                 layout.addView(dateTo);
 
@@ -318,7 +334,13 @@ public class CalendarFragment extends Fragment {
                     public void onClick(DialogInterface dialog, int which) {
                         File folder = getActivity().getExternalFilesDir("Frete&Cif");
                         File file = new File(folder, "Frete&Cif.xls");
-                        ExcelFileCreater excelFileCreater = new ExcelFileCreater(file, getActivity(), dateFrom.getText().toString(), dateTo.getText().toString());
+                        String company;
+                        if(radioButtonAdecol.isChecked()) {
+                            company = "Adecol";
+                        } else {
+                            company = "Cartint";
+                        }
+                        ExcelFileCreater excelFileCreater = new ExcelFileCreater(file, getActivity(), dateFrom.getText().toString(), dateTo.getText().toString(), company);
                         boolean criou = excelFileCreater.createExcelFile();
                         if(criou) {
                             Toast.makeText(getActivity(), "Arquivo criado com sucesso", Toast.LENGTH_SHORT).show();

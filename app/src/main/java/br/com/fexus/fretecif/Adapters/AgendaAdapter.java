@@ -31,15 +31,15 @@ public class AgendaAdapter extends RecyclerView.Adapter<AgendaAdapter.MyViewHold
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         Information current = dataInfo.get(position);
-        holder.empresa.setText(current.getEmpresa());
-        holder.empresaDestiny.setText((current.getEmpresaDestiny()));
-        holder.notaFiscal.setText("NF".concat(current.getNotaFiscal()));
+        holder.empresa.setText("Empresa: ".concat(current.getEmpresa()));
+        holder.empresaDestiny.setText("Destino: ".concat((current.getEmpresaDestiny())));
+        holder.notaFiscal.setText("NF ".concat(current.getNotaFiscal()));
         if (!current.getPeso().trim().equals("")) {
-            holder.peso.setText(current.getPeso().concat("Kg"));
+            holder.peso.setText("Peso: ".concat(current.getPeso().concat("Kg")));
         } else {
-            holder.peso.setText("");
+            holder.peso.setText("Peso: ");
         }
-        holder.valor.setText(current.getValor());
+        holder.valor.setText("Valor: ".concat(current.getValor()));
     }
 
     @Override

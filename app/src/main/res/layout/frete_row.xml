@@ -11,43 +11,53 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:background="#4169E1">
+        android:background="#f2f2f2">
 
-    <TextView
-        android:id="@+id/empresa"
-        android:textSize="20dp"
-        android:text="Empresa"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/empresa"
+            android:textSize="20dp"
+            android:text="Empresa"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10dp"/>
 
         <TextView
             android:id="@+id/empresaDestiny"
             android:textSize="20dp"
             android:text="Empresa Destino"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:paddingLeft="10dp"/>
 
-    <TextView
-        android:id="@+id/notaFiscal"
-        android:textSize="20dp"
-        android:text="Nota Fiscal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/notaFiscal"
+            android:textSize="20dp"
+            android:text="Nota Fiscal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10dp"/>
 
-    <TextView
-        android:id="@+id/peso"
-        android:textSize="20dp"
-        android:text="Peso"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/peso"
+            android:textSize="20dp"
+            android:text="Peso"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10dp"/>
 
-    <TextView
-        android:id="@+id/valor"
-        android:textSize="20dp"
-        android:text="Valor"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/valor"
+            android:textSize="20dp"
+            android:text="Valor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10dp"/>
 
     </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:background="#bfbfbf"></LinearLayout>
 
 </LinearLayout>

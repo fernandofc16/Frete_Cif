@@ -85,6 +85,25 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return information;
     }
 
+    public ArrayList<Information> selectAgendaInformationByDataAndCompany(String data, String company) {
+        database = getReadableDatabase();
+
+        Cursor cursor = database.query(TABLE_INFORMATION, null, KEY_DATA + "=? AND " + KEY_EMPRESA + "=?", new String[] { data, company }, null, null, null, null);
+        //Cursor query(String table, String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy)
+        //table = name of Table
+        //columns = list of columns to process, null returns all
+
+        ArrayList<Information> information = new ArrayList<>();
+
+        while(cursor.moveToNext()) {
+            information.add(new Information(cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6)));
+        }
+
+        cursor.close();
+        database.close();
+        return information;
+    }
+
     public boolean deleteAgendaInformation(Information agendaInformation) {
         database =  getWritableDatabase();
         int deletou = database.delete(TABLE_INFORMATION, KEY_DATA + "=? AND " + KEY_EMPRESA + "=? AND " + KEY_EMPRESA_DESTINY + "=? AND " + KEY_NOTA_FISCAL + "=? AND " + KEY_PESO + "=? AND " + KEY_VALOR + "=?",
