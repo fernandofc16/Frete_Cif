@@ -15,6 +15,7 @@ import org.apache.poi.ss.util.WorkbookUtil;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +39,7 @@ public class ExcelFileCreater {
         datasFromTo = DateCount.diferencaDeDatas(dataFrom, dataTo);
     }
 
-    public boolean createExcelFile() {
+    public boolean createExcelFile(boolean isJocelianeExcel) {
 
         boolean criou = true;
         workbook = new HSSFWorkbook();
@@ -94,17 +95,29 @@ public class ExcelFileCreater {
         cellRow2VALOR.setCellStyle(styleRows2);
 
         List<Information> informationsByDates = new ArrayList<>();
+        ArrayList<Information> informationsExcel;
+
         for (String data : datasFromTo) {
 
-            for (Information info : database.selectAgendaInformationByDataAndCompany(data, company)) {
+            if(isJocelianeExcel) {
+                informationsExcel = database.selectAgendaInformationFromJoceliane(data);
+            } else {
+                informationsExcel = database.selectAgendaInformationByDataAndCompany(data, company);
+            }
+
+            for (Information info : informationsExcel) {
                 informationsByDates.add(info);
             }
         }
+
+        CellStyle cellInfoStyle = workbook.createCellStyle();
+        cellInfoStyle.setAlignment(CellStyle.ALIGN_CENTER);
 
         for(int i = 0; i < informationsByDates.size(); i++) {
             Row rowInfo = sheet.createRow(i + 2);
             for (int j = 0; j < 5; j++) {
                 Cell cellInfo = rowInfo.createCell(j);
+                cellInfo.setCellStyle(cellInfoStyle);
                 switch (j) {
                     case 0:
                         cellInfo.setCellValue(informationsByDates.get(i).getData());

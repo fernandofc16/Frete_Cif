@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "br.com.fexus.fretecif"
-        minSdkVersion 12
+        minSdkVersion 14
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
@@ -26,4 +26,5 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.1.0'
     compile 'com.android.support:design:23.1.1'
     compile 'com.android.support:multidex:1.0.0'
+    compile 'com.google.android.gms:play-services-drive:9.4.0'
 }

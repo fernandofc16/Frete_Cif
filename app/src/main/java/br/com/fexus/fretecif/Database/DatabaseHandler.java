@@ -14,7 +14,7 @@ import br.com.fexus.fretecif.Extra.Information;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 4;
 
     private static final String DATABASE_NAME = "agendaManager",
                                 TABLE_INFORMATION = "agendaInformation",
@@ -24,7 +24,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                                 KEY_EMPRESA_DESTINY = "empresaDestiny",
                                 KEY_NOTA_FISCAL = "notaFiscal",
                                 KEY_PESO = "peso",
-                                KEY_VALOR = "valor";
+                                KEY_VALOR = "valor",
+                                KEY_IS_COLETA_JUCELIANE = "isColetaJuceliane";
 
     private static SQLiteDatabase database;
 
@@ -40,7 +41,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 + KEY_EMPRESA_DESTINY + " VARCHAR(255),"
                 + KEY_NOTA_FISCAL + " VARCHAR(255),"
                 + KEY_PESO + " VARCHAR(255),"
-                + KEY_VALOR + " VARCHAR(255));");
+                + KEY_VALOR + " VARCHAR(255),"
+                + KEY_IS_COLETA_JUCELIANE + " INTEGER);");
     }
 
     @Override
@@ -59,6 +61,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(KEY_NOTA_FISCAL, agendaInformation.getNotaFiscal());
         values.put(KEY_PESO, agendaInformation.getPeso());
         values.put(KEY_VALOR, agendaInformation.getValor());
+        values.put(KEY_IS_COLETA_JUCELIANE, agendaInformation.isColetaJuciliane());
 
         long id = database.insert(TABLE_INFORMATION, null, values);
         database.close();
@@ -69,15 +72,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public ArrayList<Information> selectAgendaInformationByData(String data) {
         database = getReadableDatabase();
 
-        Cursor cursor = database.query(TABLE_INFORMATION, null, KEY_DATA + "=?", new String[] { data }, null, null, null, null);
-        //Cursor query(String table, String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy)
+        Cursor cursor = database.query(TABLE_INFORMATION, null, KEY_DATA + "=?", new String[] { data }, null, null, KEY_IS_COLETA_JUCELIANE + " DESC, " + KEY_EMPRESA + " ASC", null);
+        //Cursor query (String table, String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy, String limit);
         //table = name of Table
         //columns = list of columns to process, null returns all
 
         ArrayList<Information> information = new ArrayList<>();
 
         while(cursor.moveToNext()) {
-            information.add(new Information(cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6)));
+            information.add(new Information(cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6), cursor.getInt(7)));
         }
 
         cursor.close();
@@ -89,14 +92,33 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         database = getReadableDatabase();
 
         Cursor cursor = database.query(TABLE_INFORMATION, null, KEY_DATA + "=? AND " + KEY_EMPRESA + "=?", new String[] { data, company }, null, null, null, null);
-        //Cursor query(String table, String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy)
+        //Cursor query (String table, String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy, String limit);
         //table = name of Table
         //columns = list of columns to process, null returns all
 
         ArrayList<Information> information = new ArrayList<>();
 
         while(cursor.moveToNext()) {
-            information.add(new Information(cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6)));
+            information.add(new Information(cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6), cursor.getInt(7)));
+        }
+
+        cursor.close();
+        database.close();
+        return information;
+    }
+
+    public ArrayList<Information> selectAgendaInformationFromJoceliane(String data) {
+        database = getReadableDatabase();
+
+        Cursor cursor = database.query(TABLE_INFORMATION, null, KEY_DATA + "=? AND " + KEY_IS_COLETA_JUCELIANE + "=?", new String[] { data, "1" }, null, null, null, null);
+        //Cursor query (String table, String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy, String limit);
+        //table = name of Table
+        //columns = list of columns to process, null returns all
+
+        ArrayList<Information> information = new ArrayList<>();
+
+        while(cursor.moveToNext()) {
+            information.add(new Information(cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6), cursor.getInt(7)));
         }
 
         cursor.close();

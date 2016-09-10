@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -106,7 +107,7 @@ public class AgendaListaFragment extends Fragment {
                 String notaFiscalTextFormated  = notaFiscalTextView.getText().toString().replaceAll("[NF]", "").trim();
                 String valorTextViewFormated = valorTextView.getText().toString().replaceAll("[Valor:]","").trim();
 
-                Information informationDelete = new Information(CalendarFragment.data, empresaTextViewFormated, empresaDestinyTextViewFormated, notaFiscalTextFormated, pesoTextViewFormated, valorTextViewFormated);
+                Information informationDelete = new Information(CalendarFragment.data, empresaTextViewFormated, empresaDestinyTextViewFormated, notaFiscalTextFormated, pesoTextViewFormated, valorTextViewFormated, 0);
 
                 AlertDialog askIt = askIfWantsToDelete(informationDelete);
                 askIt.show();
@@ -130,6 +131,7 @@ public class AgendaListaFragment extends Fragment {
         final RadioGroup radioGroup = new RadioGroup(view.getContext());
         final RadioButton radioButtonAdecol = new RadioButton(view.getContext());
         final RadioButton radioButtonCartint = new RadioButton(view.getContext());
+        final CheckBox checkBoxAdecol = new CheckBox(view.getContext());
 
         // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
         empresaDestiny.setInputType(InputType.TYPE_CLASS_TEXT);
@@ -173,15 +175,32 @@ public class AgendaListaFragment extends Fragment {
 
         radioButtonAdecol.setText("Adecol");
         radioButtonCartint.setText("Cartint");
+        checkBoxAdecol.setText("Coleta Joceliane");
         radioButtonAdecol.setTextSize(17);
         radioButtonCartint.setTextSize(17);
         radioGroup.addView(radioButtonAdecol);
         radioGroup.addView(radioButtonCartint);
         radioGroup.check(radioGroup.getChildAt(0).getId());
 
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+
+                RadioButton checkedRadioButton = (RadioButton)group.findViewById(checkedId);
+
+                if(checkedRadioButton == radioButtonAdecol) {
+                    checkBoxAdecol.setVisibility(View.VISIBLE);
+                } else {
+                    checkBoxAdecol.setVisibility(View.GONE);
+                }
+
+            }
+        });
+
         LinearLayout linearLayout = new LinearLayout(getActivity());
         linearLayout.setOrientation(LinearLayout.VERTICAL);
         linearLayout.addView(radioGroup);
+        linearLayout.addView(checkBoxAdecol);
         linearLayout.addView(empresaDestiny);
         linearLayout.addView(notaFiscal);
         linearLayout.addView(peso);
@@ -194,12 +213,19 @@ public class AgendaListaFragment extends Fragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String empresa;
+                int isColetaJoceliane;
                 if(radioButtonAdecol.isChecked()) {
                     empresa = "Adecol";
+                    if(checkBoxAdecol.isChecked()) {
+                        isColetaJoceliane = 1;
+                    } else {
+                        isColetaJoceliane = 0;
+                    }
                 } else {
                     empresa = "Cartint";
+                    isColetaJoceliane = 0;
                 }
-                database.insertAgendaInformation(new Information(CalendarFragment.data, empresa, empresaDestiny.getText().toString(), notaFiscal.getText().toString(), peso.getText().toString(), valor.getText().toString()));
+                database.insertAgendaInformation(new Information(CalendarFragment.data, empresa, empresaDestiny.getText().toString(), notaFiscal.getText().toString(), peso.getText().toString(), valor.getText().toString(), isColetaJoceliane));
                 AgendaAdapter.dataInfo = database.selectAgendaInformationByData(CalendarFragment.data);
                 adapter.notifyDataSetChanged();
             }

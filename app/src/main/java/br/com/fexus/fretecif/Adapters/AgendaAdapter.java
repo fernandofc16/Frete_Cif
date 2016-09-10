@@ -1,10 +1,12 @@
 package br.com.fexus.fretecif.Adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -40,6 +42,12 @@ public class AgendaAdapter extends RecyclerView.Adapter<AgendaAdapter.MyViewHold
             holder.peso.setText("Peso: ");
         }
         holder.valor.setText("Valor: ".concat(current.getValor()));
+
+        if(current.isColetaJuciliane() == 1) {
+            holder.layoutFreteRow.setBackgroundColor(Color.parseColor("#a6a6a6"));
+            holder.layoutFaixaFreteRow.setBackgroundColor(Color.parseColor("#595959"));
+        }
+
     }
 
     @Override
@@ -50,6 +58,7 @@ public class AgendaAdapter extends RecyclerView.Adapter<AgendaAdapter.MyViewHold
     class MyViewHolder extends RecyclerView.ViewHolder {
 
         TextView empresa, empresaDestiny, notaFiscal, peso, valor;
+        LinearLayout layoutFreteRow, layoutFaixaFreteRow;
 
         public MyViewHolder(View itemView) {
             super(itemView);
@@ -58,6 +67,8 @@ public class AgendaAdapter extends RecyclerView.Adapter<AgendaAdapter.MyViewHold
             notaFiscal = (TextView) itemView.findViewById(R.id.notaFiscal);
             peso = (TextView) itemView.findViewById(R.id.peso);
             valor = (TextView) itemView.findViewById(R.id.valor);
+            layoutFreteRow = (LinearLayout) itemView.findViewById(R.id.layoutFreteRow);
+            layoutFaixaFreteRow = (LinearLayout) itemView.findViewById(R.id.layoutFaixaFreteRow);
         }
 
     }
