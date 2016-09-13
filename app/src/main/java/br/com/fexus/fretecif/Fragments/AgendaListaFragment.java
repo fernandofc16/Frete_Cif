@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -35,6 +36,7 @@ import br.com.fexus.fretecif.R;
 public class AgendaListaFragment extends Fragment {
 
     private DatabaseHandler database;
+    public static TextView agendaData;
     public static AgendaAdapter adapter;
 
     public AgendaListaFragment() {
@@ -51,6 +53,9 @@ public class AgendaListaFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_agenda_lista, container, false);
+
+        agendaData = (TextView) view.findViewById(R.id.agendaData);
+        agendaData.setText("DATA: ".concat(CalendarFragment.data));
 
         FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -93,28 +98,215 @@ public class AgendaListaFragment extends Fragment {
             }
 
             @Override
-            public void onLongClick(View view, int position) {
+            public void onLongClick(final View view, int position) {
+                Log.e("FEXUS: ", "PASSOU NO ONLONGCLICK");
+                CharSequence[] options = {"Editar", "Deletar"};
+                final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder .setTitle("Opções:")
+                        .setSingleChoiceItems(options, -1, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
 
-                TextView empresaTextView = (TextView) view.findViewById(R.id.empresa);
-                TextView empresaDestinyTextView = (TextView) view.findViewById(R.id.empresaDestiny);
-                TextView notaFiscalTextView = (TextView) view.findViewById(R.id.notaFiscal);
-                TextView pesoTextView = (TextView) view.findViewById(R.id.peso);
-                TextView valorTextView = (TextView) view.findViewById(R.id.valor);
+                                switch (which) {
+                                    case 0:
 
-                String empresaTextViewFormated = empresaTextView.getText().toString().substring(9, empresaTextView.getText().toString().length());
-                String empresaDestinyTextViewFormated = empresaDestinyTextView.getText().toString().substring(9, empresaDestinyTextView.getText().toString().length());
-                String pesoTextViewFormated = pesoTextView.getText().toString().replaceAll("[Kg]", "").replaceAll("[Peso:]","").trim();
-                String notaFiscalTextFormated  = notaFiscalTextView.getText().toString().replaceAll("[NF]", "").trim();
-                String valorTextViewFormated = valorTextView.getText().toString().replaceAll("[Valor:]","").trim();
+                                        TextView empresaTextView = (TextView) view.findViewById(R.id.empresa);
+                                        TextView empresaDestinyTextView = (TextView) view.findViewById(R.id.empresaDestiny);
+                                        TextView notaFiscalTextView = (TextView) view.findViewById(R.id.notaFiscal);
+                                        TextView pesoTextView = (TextView) view.findViewById(R.id.peso);
+                                        TextView valorTextView = (TextView) view.findViewById(R.id.valor);
 
-                Information informationDelete = new Information(CalendarFragment.data, empresaTextViewFormated, empresaDestinyTextViewFormated, notaFiscalTextFormated, pesoTextViewFormated, valorTextViewFormated, 0);
+                                        int isColetaJociliane;
+                                        LinearLayout linearLayout = (LinearLayout) view.findViewById(R.id.layoutFreteRow);
 
-                AlertDialog askIt = askIfWantsToDelete(informationDelete);
-                askIt.show();
+                                        if(linearLayout.getTag().equals("1")) {
+                                            isColetaJociliane = 1;
+                                        } else {
+                                            isColetaJociliane = 0;
+                                        }
+
+                                        String empresaTextViewFormated = empresaTextView.getText().toString().substring(9, empresaTextView.getText().toString().length());
+                                        String empresaDestinyTextViewFormated = empresaDestinyTextView.getText().toString().substring(9, empresaDestinyTextView.getText().toString().length());
+                                        String pesoTextViewFormated = pesoTextView.getText().toString().replaceAll("[Kg]", "").replaceAll("[Peso:]","").trim();
+                                        String notaFiscalTextFormated  = notaFiscalTextView.getText().toString().replaceAll("[NF]", "").trim();
+                                        String valorTextViewFormated = valorTextView.getText().toString().replaceAll("[Valor:]","").trim();
+
+                                        editAgendaInformation(view, new Information(CalendarFragment.data, empresaTextViewFormated, empresaDestinyTextViewFormated, notaFiscalTextFormated, pesoTextViewFormated, valorTextViewFormated, isColetaJociliane));
+                                        dialog.cancel();
+                                        break;
+                                    case 1:
+                                        deleteAgendaInformation(view);
+                                        dialog.cancel();
+                                        break;
+                                }
+
+                            }
+                        });
+
+                builder.show();
+
             }
         }));
 
         return view;
+    }
+
+    private void editAgendaInformation(View view, final Information oldInformation) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Editar:");
+
+        // Set up the input
+        final EditText empresaDestiny = new EditText(getActivity());
+        final EditText notaFiscal = new EditText(getActivity());
+        final EditText peso = new EditText(getActivity());
+        final EditText valor = new EditText(getActivity());
+
+        final RadioGroup radioGroup = new RadioGroup(view.getContext());
+        final RadioButton radioButtonAdecol = new RadioButton(view.getContext());
+        final RadioButton radioButtonCartint = new RadioButton(view.getContext());
+        final CheckBox checkBoxAdecol = new CheckBox(view.getContext());
+
+        // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+        empresaDestiny.setInputType(InputType.TYPE_CLASS_TEXT);
+        empresaDestiny.setHint("Empresa de Destino");
+        empresaDestiny.setText(oldInformation.getEmpresaDestiny());
+        notaFiscal.setInputType(InputType.TYPE_CLASS_PHONE);
+        notaFiscal.setHint("Nota Fiscal");
+        notaFiscal.setText(oldInformation.getNotaFiscal());
+        peso.setInputType(InputType.TYPE_CLASS_PHONE);
+        peso.setHint("Peso");
+        peso.setText(oldInformation.getPeso());
+        valor.setInputType(InputType.TYPE_CLASS_PHONE);
+        valor.setHint("Valor");
+        valor.setText(oldInformation.getValor());
+        valor.addTextChangedListener(new TextWatcher() {
+            private String current = "";
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(!s.toString().equals(current)){
+                    valor.removeTextChangedListener(this);
+
+                    String cleanString = s.toString().replaceAll("[R$,.]", "");
+
+                    double parsed = Double.parseDouble(cleanString);
+                    String formatted = NumberFormat.getCurrencyInstance().format((parsed/100));
+
+                    current = formatted;
+                    valor.setText(formatted);
+                    valor.setSelection(formatted.length());
+
+                    valor.addTextChangedListener(this);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        radioButtonAdecol.setText("Adecol");
+        radioButtonCartint.setText("Cartint");
+        checkBoxAdecol.setText("Coleta Joceliane");
+        radioButtonAdecol.setTextSize(17);
+        radioButtonCartint.setTextSize(17);
+        radioGroup.addView(radioButtonAdecol);
+        radioGroup.addView(radioButtonCartint);
+        radioGroup.check(radioGroup.getChildAt(0).getId());
+
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+
+                RadioButton checkedRadioButton = (RadioButton)group.findViewById(checkedId);
+
+                if(checkedRadioButton == radioButtonAdecol) {
+                    checkBoxAdecol.setVisibility(View.VISIBLE);
+                } else {
+                    checkBoxAdecol.setVisibility(View.GONE);
+                }
+
+            }
+        });
+
+        if(oldInformation.getEmpresa().equals("Adecol")) {
+            radioButtonAdecol.setChecked(true);
+            if(oldInformation.isColetaJuciliane() == 1) {
+                checkBoxAdecol.setChecked(true);
+            }
+        } else {
+            radioButtonCartint.setChecked(true);
+        }
+
+        LinearLayout linearLayout = new LinearLayout(getActivity());
+        linearLayout.setOrientation(LinearLayout.VERTICAL);
+        linearLayout.addView(radioGroup);
+        linearLayout.addView(checkBoxAdecol);
+        linearLayout.addView(empresaDestiny);
+        linearLayout.addView(notaFiscal);
+        linearLayout.addView(peso);
+        linearLayout.addView(valor);
+
+        builder.setView(linearLayout);
+
+        // Set up the buttons
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String empresa;
+                int isColetaJoceliane;
+                if(radioButtonAdecol.isChecked()) {
+                    empresa = "Adecol";
+                    if(checkBoxAdecol.isChecked()) {
+                        isColetaJoceliane = 1;
+                    } else {
+                        isColetaJoceliane = 0;
+                    }
+                } else {
+                    empresa = "Cartint";
+                    isColetaJoceliane = 0;
+                }
+                database.modifyAgendaInformation(new Information(CalendarFragment.data, empresa, empresaDestiny.getText().toString(), notaFiscal.getText().toString(), peso.getText().toString(), valor.getText().toString(), isColetaJoceliane), oldInformation);
+                AgendaAdapter.dataInfo = database.selectAgendaInformationByData(CalendarFragment.data);
+                adapter.notifyDataSetChanged();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+
+    }
+
+    private void deleteAgendaInformation(View view) {
+
+        TextView empresaTextView = (TextView) view.findViewById(R.id.empresa);
+        TextView empresaDestinyTextView = (TextView) view.findViewById(R.id.empresaDestiny);
+        TextView notaFiscalTextView = (TextView) view.findViewById(R.id.notaFiscal);
+        TextView pesoTextView = (TextView) view.findViewById(R.id.peso);
+        TextView valorTextView = (TextView) view.findViewById(R.id.valor);
+
+        String empresaTextViewFormated = empresaTextView.getText().toString().substring(9, empresaTextView.getText().toString().length());
+        String empresaDestinyTextViewFormated = empresaDestinyTextView.getText().toString().substring(9, empresaDestinyTextView.getText().toString().length());
+        String pesoTextViewFormated = pesoTextView.getText().toString().replaceAll("[Kg]", "").replaceAll("[Peso:]","").trim();
+        String notaFiscalTextFormated  = notaFiscalTextView.getText().toString().replaceAll("[NF]", "").trim();
+        String valorTextViewFormated = valorTextView.getText().toString().replaceAll("[Valor:]","").trim();
+
+        Information informationDelete = new Information(CalendarFragment.data, empresaTextViewFormated, empresaDestinyTextViewFormated, notaFiscalTextFormated, pesoTextViewFormated, valorTextViewFormated, 0);
+
+        AlertDialog askIt = askIfWantsToDelete(informationDelete);
+        askIt.show();
+
     }
 
     private AlertDialog.Builder createNewInformation(View view) {

@@ -45,6 +45,7 @@ public class AgendaAdapter extends RecyclerView.Adapter<AgendaAdapter.MyViewHold
 
         if(current.isColetaJuciliane() == 1) {
             holder.layoutFreteRow.setBackgroundColor(Color.parseColor("#a6a6a6"));
+            holder.layoutFreteRow.setTag("1");
             holder.layoutFaixaFreteRow.setBackgroundColor(Color.parseColor("#595959"));
         }
 

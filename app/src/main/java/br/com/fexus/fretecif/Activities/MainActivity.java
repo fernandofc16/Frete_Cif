@@ -385,7 +385,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     //exporting database
     private void exportDB() {
-        // TODO Auto-generated method stub
 
         try {
 

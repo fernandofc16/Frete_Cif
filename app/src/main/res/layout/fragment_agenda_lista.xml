@@ -5,10 +5,22 @@
     android:layout_height="match_parent"
     tools:context="br.com.fexus.fretecif.Fragments.AgendaListaFragment">
 
+    <TextView
+        android:id="@+id/agendaData"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:textSize="25dp"
+        android:text="DATA"
+        android:background="#3F51B5"
+        android:textColor="#FFFFFF"
+        android:padding="5dp"/>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingTop="40dp">
 
     </android.support.v7.widget.RecyclerView>
 

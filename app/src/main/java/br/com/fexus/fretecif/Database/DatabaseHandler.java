@@ -134,6 +134,22 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return deletou > 0;
     }
 
+    public void modifyAgendaInformation(Information editedInformation, Information oldInformation) {
+        database = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(KEY_DATA, editedInformation.getData());
+        values.put(KEY_EMPRESA, editedInformation.getEmpresa());
+        values.put(KEY_EMPRESA_DESTINY, editedInformation.getEmpresaDestiny());
+        values.put(KEY_NOTA_FISCAL, editedInformation.getNotaFiscal());
+        values.put(KEY_PESO, editedInformation.getPeso());
+        values.put(KEY_VALOR, editedInformation.getValor());
+        values.put(KEY_IS_COLETA_JUCELIANE, editedInformation.isColetaJuciliane());
+
+        database.update(TABLE_INFORMATION, values, KEY_DATA + "=? AND " + KEY_EMPRESA + "=? AND " + KEY_EMPRESA_DESTINY + "=? AND " + KEY_NOTA_FISCAL + "=? AND " + KEY_PESO + "=? AND " + KEY_VALOR + "=?",
+                new String[]{oldInformation.getData(), oldInformation.getEmpresa(), oldInformation.getEmpresaDestiny(), oldInformation.getNotaFiscal(), oldInformation.getPeso(), oldInformation.getValor()});
+        database.close();
+    }
+
     public BigDecimal calculateTotalByCompany(int company, List<String> datas) {
 
         database = getReadableDatabase();
@@ -158,7 +174,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 String valorFormated = valor.replaceAll("[R$]", "");
                 String valorFormated1 = valorFormated.replaceAll("\\.", "");
                 String valorFormated2 = valorFormated1.replaceAll(",", ".");
-                total = total.add(BigDecimal.valueOf(Double.parseDouble(valorFormated2)));
+                if(!valorFormated2.trim().equals("")) {
+                    total = total.add(BigDecimal.valueOf(Double.parseDouble(valorFormated2)));
+                }
             }
             cursorCartint.close();
 
